@@ -16,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    implementation("ch.obermuhlner:big-math:2.3.0")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
