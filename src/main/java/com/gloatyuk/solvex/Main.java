@@ -1,10 +1,8 @@
 package com.gloatyuk.solvex;
 
-import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
 import java.util.Scanner;
-import java.math.RoundingMode;
 
 public class Main {
     public static void OSIdentify() {
@@ -47,6 +45,12 @@ public class Main {
             scanner.nextLine();
         }
     }
+    public static void Variables() {
+        double variableX, variableY, variableZ,variableA, variableB, variableC, variableD, variableE, variableF;
+        System.out.print("\n");
+        System.out.println("Variable Menu" + "\n");
+        // get this shit working sooner or later
+    }
     public static void Pythagoras() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("\n");
@@ -62,6 +66,20 @@ public class Main {
             int bValue = scanner.nextInt();
             double cValue = Math.sqrt(Math.pow(aValue, 2) + Math.pow(bValue, 2));
             System.out.println("Hypotenuse Length: " + cValue + "\n");
+        }
+        if (Objects.equals(command, "reverse")) {
+            System.out.print("\n");
+            System.out.print("C Value: ");
+            int cValue = scanner.nextInt();
+            System.out.print("A Value: ");
+            int aValue = scanner.nextInt();
+            double bValue = Math.sqrt(Math.pow(cValue, 2) - Math.pow(aValue, 2));
+            System.out.println("Side Length: " + bValue + "\n");
+        }
+        else {
+            System.out.print("Invalid Command, press enter to try again...");
+            scanner.nextLine();
+            Pythagoras();
         }
     }
 
