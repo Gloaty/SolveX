@@ -2,7 +2,6 @@ package com.gloatyuk.solvex;
 
 import java.math.MathContext;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Scanner;
 import java.util.Map;
 
@@ -29,9 +28,9 @@ public class Main {
         else {
             System.out.println("Unknown");
         }
-        System.out.println("\n");
+        System.out.print("\n");
     }
-    public static void Settings() {
+    public static void settings() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Settings Menu" + "\n");
         System.out.println("precision - Sets the precision of float outputs" + "\n");
@@ -48,7 +47,7 @@ public class Main {
             scanner.nextLine();
         }
     }
-    public static void Variables() {
+    public static void variables() {
         Scanner scanner = new Scanner(System.in);
         String[] varNames = {"X", "Y", "Z", "A", "B", "C", "D", "E", "F"};
         for (String name : varNames) {
@@ -63,7 +62,7 @@ public class Main {
         String command = scanner.nextLine().trim();
         if (command.equalsIgnoreCase("return")) {
             System.out.println("Exiting Variable Menu...");
-            Menu();
+            menu();
         }
         if (command.equalsIgnoreCase("recall")) {
             System.out.println("Current Variable Values: " + "\n");
@@ -72,7 +71,7 @@ public class Main {
             }
             System.out.print("Press enter to continue...");
             scanner.nextLine();
-            Variables();
+            variables();
         }
         if (command.toLowerCase().startsWith("edit --")) {
             String varName = command.substring(7).trim().toUpperCase();
@@ -93,7 +92,7 @@ public class Main {
             }
         }
     }
-    public static void Pythagoras() {
+    public static void pythagoras() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("\n");
         System.out.println("Pythagoras Calculations");
@@ -104,29 +103,64 @@ public class Main {
         if (command.equalsIgnoreCase("standard")) {
             System.out.print("\n");
             System.out.print("A Value: ");
-            int aValue = scanner.nextInt();
+            double aValue = scanner.nextInt();
             System.out.print("B Value: ");
-            int bValue = scanner.nextInt();
+            double bValue = scanner.nextInt();
             double cValue = Math.sqrt(Math.pow(aValue, 2) + Math.pow(bValue, 2));
             System.out.println("Hypotenuse Length: " + cValue + "\n");
         }
         if (command.equalsIgnoreCase("reverse")) {
             System.out.print("\n");
             System.out.print("C Value: ");
-            int cValue = scanner.nextInt();
+            double cValue = scanner.nextInt();
             System.out.print("A Value: ");
-            int aValue = scanner.nextInt();
+            double aValue = scanner.nextInt();
             double bValue = Math.sqrt(Math.pow(cValue, 2) - Math.pow(aValue, 2));
             System.out.println("Side Length: " + bValue + "\n");
         }
         else {
             System.out.print("Invalid Command, press enter to try again...");
             scanner.nextLine();
-            Pythagoras();
+            pythagoras();
         }
     }
-
-    public static void Menu() {
+    public static double calculationEngine(String equation) {
+        Scanner scanner = new Scanner(System.in);
+        equation = equation.replaceAll("//s", "");
+        char operator = 0;
+        int operatorIndex = 1;
+        for (int i = 0; i < equation.length(); i++) {
+            char c = equation.charAt(i);
+            if ((c == '+') || (c == '-') || (c == '*') || (c == '/')) {
+                operator = c;
+                operatorIndex = i;
+            } else if (operatorIndex == -1) {
+                System.out.println("No operator found in equation, please try again");
+                scanner.nextLine();
+                calculate();
+            }
+        }
+        double left = Integer.parseInt(equation.substring(0, operatorIndex));
+        double right = Integer.parseInt(equation.substring(operatorIndex + 1));
+        return switch (operator) {
+            case '+' -> left + right;
+            case '-' -> left - right;
+            case '*' -> left * right;
+            case '/' -> left / right;
+            default -> 0;
+        };
+    }
+    public static void calculate() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Calculation Menu" + "\n");
+        System.out.println("Please enter equation...");
+        System.out.print("Equation: ");
+        String equation = scanner.nextLine();
+        System.out.println("Calculating...");
+        double result = calculationEngine(equation);
+        System.out.println("Result: " + result);
+    }
+    public static void menu() {
         Scanner scanner = new Scanner(System.in);
         OSIdentify();
         System.out.println("SolveX Main Menu");
@@ -139,36 +173,22 @@ public class Main {
         System.out.println("exit - Exit the program");
         System.out.print("Command: ");
         String command = scanner.nextLine().trim();
-        if (command.equalsIgnoreCase("variable")) {
-            Variables();
-        }
-        else if (command.equalsIgnoreCase("calculate")) {
-            // Calculator();
-        }
-        else if (command.equalsIgnoreCase("probabilities")) {
-            // Probability();
-        }
-        else if (command.equalsIgnoreCase("pythagoras")) {
-            Pythagoras();
-        }
-        else if (command.equalsIgnoreCase("settings")) {
-            Settings();
-        }
-        else if (command.equalsIgnoreCase("help")) {
-            // Help();
-        }
-        else if (command.equalsIgnoreCase("exit")) {
-            Exit(0);
-        }
-        else {
-            System.out.println("Invalid Command, please try again");
+        switch (command) {
+            case "variable": variables(); break;
+            case "calculate": calculate(); break;
+            //case "probabilities": probability(); break;
+            case "pythagoras": pythagoras(); break;
+            case "settings": settings(); break;
+            //case "help": help(); break;
+            case "exit": exit(0); break;
+            default: System.out.println("Invalid Command, please try again");
         }
         System.out.println("Press enter to continue...");
         scanner.nextLine();
-        Menu();
+        menu();
     }
 
-    public static void Exit(int code) {
+    public static void exit(int code) {
         System.out.println("Exiting program...");
         try {
             Thread.sleep(1000);
@@ -181,6 +201,6 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
-        Menu();
+        menu();
     }
 }
