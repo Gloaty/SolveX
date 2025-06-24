@@ -1,10 +1,13 @@
 package com.gloatyuk.solvex;
 
 import java.math.MathContext;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.Map;
 
 public class Main {
+    static Map<String, Double> variables = new HashMap<>();
     public static void OSIdentify() {
         String os = System.getProperty("os.name").toLowerCase();
         System.out.print("Operating System Detected - ");
@@ -33,8 +36,8 @@ public class Main {
         System.out.println("Settings Menu" + "\n");
         System.out.println("precision - Sets the precision of float outputs" + "\n");
         System.out.println("Command: ");
-        String command = scanner.nextLine();
-        if (Objects.equals(command, "precision")) {
+        String command = scanner.nextLine().trim();
+        if (command.equalsIgnoreCase("precision")) {
             System.out.println("Precision Value: ");
             int precision = scanner.nextInt();
             MathContext mc = new MathContext(precision);
@@ -46,10 +49,49 @@ public class Main {
         }
     }
     public static void Variables() {
-        double variableX, variableY, variableZ,variableA, variableB, variableC, variableD, variableE, variableF;
+        Scanner scanner = new Scanner(System.in);
+        String[] varNames = {"X", "Y", "Z", "A", "B", "C", "D", "E", "F"};
+        for (String name : varNames) {
+            variables.put(name, 0.0);
+        }
         System.out.print("\n");
         System.out.println("Variable Menu" + "\n");
-        // get this shit working sooner or later
+        System.out.println("edit --VAR - Edit a variable's data");
+        System.out.println("recall - Show values of all variables");
+        System.out.println("return - Exit variable menu");
+        System.out.println("Command: ");
+        String command = scanner.nextLine().trim();
+        if (command.equalsIgnoreCase("return")) {
+            System.out.println("Exiting Variable Menu...");
+            Menu();
+        }
+        if (command.equalsIgnoreCase("recall")) {
+            System.out.println("Current Variable Values: " + "\n");
+            for (String name : varNames) {
+                System.out.println(name + " Value: " + variables.get(name));
+            }
+            System.out.print("Press enter to continue...");
+            scanner.nextLine();
+            Variables();
+        }
+        if (command.toLowerCase().startsWith("edit --")) {
+            String varName = command.substring(7).trim().toUpperCase();
+            if (variables.containsKey(varName)) {
+                while (true) {
+                    System.out.print("Enter new value for " + varName + ": ");
+                    try {
+                        double newValue = Double.parseDouble(scanner.nextLine().trim());
+                        variables.put(varName, newValue);
+                        System.out.println(varName + " updated to " + newValue);
+                        break;
+                    }
+                    catch (NumberFormatException e){
+                        System.out.println("Invalid entry, please try again. Press enter to continue...");
+                        scanner.nextLine();
+                    }
+                }
+            }
+        }
     }
     public static void Pythagoras() {
         Scanner scanner = new Scanner(System.in);
@@ -57,8 +99,9 @@ public class Main {
         System.out.println("Pythagoras Calculations");
         System.out.println("standard - A^2 + B^2 = C^2");
         System.out.println("reverse - C^2 - A^2 = B^2");
-        String command = scanner.nextLine();
-        if (Objects.equals(command, "standard")) {
+        System.out.print("Command: ");
+        String command = scanner.nextLine().trim();
+        if (command.equalsIgnoreCase("standard")) {
             System.out.print("\n");
             System.out.print("A Value: ");
             int aValue = scanner.nextInt();
@@ -67,7 +110,7 @@ public class Main {
             double cValue = Math.sqrt(Math.pow(aValue, 2) + Math.pow(bValue, 2));
             System.out.println("Hypotenuse Length: " + cValue + "\n");
         }
-        if (Objects.equals(command, "reverse")) {
+        if (command.equalsIgnoreCase("reverse")) {
             System.out.print("\n");
             System.out.print("C Value: ");
             int cValue = scanner.nextInt();
@@ -95,26 +138,26 @@ public class Main {
         System.out.println("help - Opens Help Menu");
         System.out.println("exit - Exit the program");
         System.out.print("Command: ");
-        String command = scanner.nextLine();
-        if (Objects.equals(command, "variable")) {
-            // Variables();
+        String command = scanner.nextLine().trim();
+        if (command.equalsIgnoreCase("variable")) {
+            Variables();
         }
-        else if (Objects.equals(command, "calculate")) {
+        else if (command.equalsIgnoreCase("calculate")) {
             // Calculator();
         }
-        else if (Objects.equals(command, "probabilities")) {
+        else if (command.equalsIgnoreCase("probabilities")) {
             // Probability();
         }
-        else if (Objects.equals(command, "pythagoras")) {
+        else if (command.equalsIgnoreCase("pythagoras")) {
             Pythagoras();
         }
-        else if (Objects.equals(command, "settings")) {
+        else if (command.equalsIgnoreCase("settings")) {
             Settings();
         }
-        else if (Objects.equals(command, "help")) {
+        else if (command.equalsIgnoreCase("help")) {
             // Help();
         }
-        else if (Objects.equals(command, "exit")) {
+        else if (command.equalsIgnoreCase("exit")) {
             Exit(0);
         }
         else {
