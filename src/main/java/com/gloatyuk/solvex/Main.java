@@ -30,6 +30,7 @@ public class Main {
         }
         System.out.print("\n");
     }
+
     public static void settings() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Settings Menu" + "\n");
@@ -41,12 +42,12 @@ public class Main {
             int precision = scanner.nextInt();
             MathContext mc = new MathContext(precision);
             // not working at the moment
-        }
-        else {
+        } else {
             System.out.println("Invalid Command, please try again");
             scanner.nextLine();
         }
     }
+
     public static void variables() {
         Scanner scanner = new Scanner(System.in);
         String[] varNames = {"X", "Y", "Z", "A", "B", "C", "D", "E", "F"};
@@ -92,6 +93,7 @@ public class Main {
             }
         }
     }
+
     public static void pythagoras() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("\n");
@@ -124,24 +126,40 @@ public class Main {
             pythagoras();
         }
     }
+
     public static double calculationEngine(String equation) {
         Scanner scanner = new Scanner(System.in);
-        equation = equation.replaceAll("//s", "");
+        equation = equation.replaceAll("\\s", "");
         char operator = 0;
         int operatorIndex = 1;
+        double left = 0;
+        double right = 0;
         for (int i = 0; i < equation.length(); i++) {
             char c = equation.charAt(i);
             if ((c == '+') || (c == '-') || (c == '*') || (c == '/')) {
                 operator = c;
                 operatorIndex = i;
-            } else if (operatorIndex == -1) {
+                for(int i2 = 0; i2 < equation.substring(1, operatorIndex).length(); i2++ ) {
+                    if (equation.contains("(")) {
+                        int closingBracketIndex = equation.indexOf(")", i2);
+                        String subEquation = equation.substring(i2+1, closingBracketIndex);
+                        double subResult = calculationEngine(subEquation);
+                        String newEquation = equation.substring(0, i2) + subResult + equation.substring(closingBracketIndex + 1);
+                        return calculationEngine(newEquation);
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else if (operatorIndex == -1) {
                 System.out.println("No operator found in equation, please try again");
                 scanner.nextLine();
                 calculate();
             }
         }
-        double left = Integer.parseInt(equation.substring(0, operatorIndex));
-        double right = Integer.parseInt(equation.substring(operatorIndex + 1));
+        left = Double.parseDouble(equation.substring(0, operatorIndex));
+        right = Double.parseDouble(equation.substring(operatorIndex + 1));
         return switch (operator) {
             case '+' -> left + right;
             case '-' -> left - right;
@@ -150,6 +168,7 @@ public class Main {
             default -> 0;
         };
     }
+
     public static void calculate() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Calculation Menu" + "\n");
@@ -157,9 +176,11 @@ public class Main {
         System.out.print("Equation: ");
         String equation = scanner.nextLine();
         System.out.println("Calculating...");
-        double result = calculationEngine(equation);
+        double result = 0;
+        result = calculationEngine(equation);
         System.out.println("Result: " + result);
     }
+
     public static void menu() {
         Scanner scanner = new Scanner(System.in);
         OSIdentify();
