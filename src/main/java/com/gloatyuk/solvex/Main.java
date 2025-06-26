@@ -152,7 +152,7 @@ public class Main {
                 while (!operators.isEmpty() && operators.peek() != '(') {
                     output.add(String.valueOf(operators.pop()));
                 }
-                if (!operators.isEmpty() && operators.peek() != '(') {
+                if (!operators.isEmpty() && operators.peek() == '(') {
                     operators.pop();
                 }
             }
@@ -205,6 +205,16 @@ public class Main {
     public static double calculationEngine(String equation) {
         equation = equation.replaceAll("\\s", "");
         List<String> postfix = toPostfix(equation);
+        if (equation.contains("pow") || equation.contains("root")) {
+            double targetNumber = Double.parseDouble(equation.substring(equation.indexOf("(")+1, equation.indexOf(",")));
+            double power = Double.parseDouble(equation.substring(equation.indexOf(",")+1, equation.indexOf(")")));
+            if (equation.contains("pow")) {
+                return Math.pow(targetNumber, power);
+            }
+            if (equation.contains("root")) {
+                return Math.pow(targetNumber, 1/power);
+            }
+        }
         return evaluatePostfix(postfix);
     }
 
@@ -226,8 +236,28 @@ public class Main {
     }
 
     public static void algebra() {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Algebra Menu" + "\n");
-
+        System.out.println("quadratic - Solve quadratic");
+        System.out.println("solvex - Solve for a value of X");
+        System.out.print("Command: ");
+        String command = scanner.nextLine();
+        System.out.println(command);
+        switch (command) {
+            case "quadratic":
+                System.out.println("Quadratics must be given in the form Ax^2 + Bx + C = 0");
+                System.out.print("A Value: ");
+                double aValue = scanner.nextDouble();
+                System.out.print("B Value: ");
+                double bValue = scanner.nextDouble();
+                System.out.print("C Value: ");
+                double cValue = scanner.nextDouble();
+                double resultPos = ((-bValue + Math.sqrt(Math.pow(bValue, 2) - (4 * aValue * cValue))) / (2 * aValue));
+                double resultNeg = ((-bValue - Math.sqrt(Math.pow(bValue, 2) - (4 * aValue * cValue))) / (2 * aValue));
+                System.out.println("+Result: " + resultPos);
+                System.out.println("-Result: " + resultNeg);
+                break;
+        }
     }
     public static void menu() {
         Scanner scanner = new Scanner(System.in);
