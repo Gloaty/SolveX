@@ -4,6 +4,9 @@ import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Stack;
 
 public class Main {
     static Map<String, Double> variables = new HashMap<>();
@@ -127,60 +130,105 @@ public class Main {
         }
     }
 
-    public static double calculationEngine(String equation) {
-        Scanner scanner = new Scanner(System.in);
-        equation = equation.replaceAll("\\s", "");
-        char operator = 0;
-        int operatorIndex = 1;
-        double left = 0;
-        double right = 0;
-        for (int i = 0; i < equation.length(); i++) {
-            char c = equation.charAt(i);
-            if ((c == '+') || (c == '-') || (c == '*') || (c == '/')) {
-                operator = c;
-                operatorIndex = i;
-                for(int i2 = 0; i2 < equation.substring(1, operatorIndex).length(); i2++ ) {
-                    if (equation.contains("(")) {
-                        int closingBracketIndex = equation.indexOf(")", i2);
-                        String subEquation = equation.substring(i2+1, closingBracketIndex);
-                        double subResult = calculationEngine(subEquation);
-                        String newEquation = equation.substring(0, i2) + subResult + equation.substring(closingBracketIndex + 1);
-                        return calculationEngine(newEquation);
-                    }
-                    else {
-                        break;
-                    }
+    public static List<String> toPostfix(String infix) {
+        List<String> output = new ArrayList<>();
+        Stack<Character> operators = new Stack<>();
+        int i = 0;
+        while (i < infix.length()) {
+            char c = infix.charAt(i);
+            if (Character.isDigit(c) || c == '.') {
+                StringBuilder number = new StringBuilder();
+                while (i < infix.length() && (Character.isDigit(infix.charAt(i)) || infix.charAt(i) == '.')) {
+                    number.append(infix.charAt(i));
+                    i++;
+                }
+                output.add(number.toString());
+                continue;
+            }
+            if (c == '(') {
+                operators.push(c);
+            }
+            else if (c == ')') {
+                while (!operators.isEmpty() && operators.peek() != '(') {
+                    output.add(String.valueOf(operators.pop()));
+                }
+                if (!operators.isEmpty() && operators.peek() != '(') {
+                    operators.pop();
                 }
             }
-            else if (operatorIndex == -1) {
-                System.out.println("No operator found in equation, please try again");
-                scanner.nextLine();
-                calculate();
+            else if (isOperator(c)) {
+                while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(c)) {
+                    output.add(String.valueOf(operators.pop()));
+                }
+                operators.push(c);
+            }
+            i++;
+        }
+        while (!operators.isEmpty()) {
+            output.add(String.valueOf(operators.pop()));
+        }
+        return output;
+    }
+
+    public static double evaluatePostfix(List<String> postfix) {
+        Stack<Double> stack = new Stack<>();
+        for (String token : postfix) {
+            if (isOperator(token.charAt(0)) && token.length() == 1) {
+                double b = stack.pop();
+                double a = stack.pop();
+                switch (token.charAt(0)) {
+                    case '+' -> stack.push(a+b);
+                    case '-' -> stack.push(a-b);
+                    case '*' -> stack.push(a*b);
+                    case '/' -> stack.push(a/b);
+                }
+            }
+            else {
+                stack.push(Double.parseDouble(token));
             }
         }
-        left = Double.parseDouble(equation.substring(0, operatorIndex));
-        right = Double.parseDouble(equation.substring(operatorIndex + 1));
-        return switch (operator) {
-            case '+' -> left + right;
-            case '-' -> left - right;
-            case '*' -> left * right;
-            case '/' -> left / right;
+        return stack.pop();
+    }
+
+    public static boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/';
+    }
+
+    public static int precedence(char op) {
+        return switch (op) {
+            case '+', '-' -> 1;
+            case '*', '/' -> 2;
             default -> 0;
         };
     }
 
+    public static double calculationEngine(String equation) {
+        equation = equation.replaceAll("\\s", "");
+        List<String> postfix = toPostfix(equation);
+        return evaluatePostfix(postfix);
+    }
+
     public static void calculate() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Calculation Menu" + "\n");
+        System.out.println("Calculation Menu\n");
         System.out.println("Please enter equation...");
         System.out.print("Equation: ");
         String equation = scanner.nextLine();
         System.out.println("Calculating...");
-        double result = 0;
-        result = calculationEngine(equation);
+        double result = calculationEngine(equation);
         System.out.println("Result: " + result);
+        try {
+            Thread.sleep(1500);
+        }
+        catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
     }
 
+    public static void algebra() {
+        System.out.println("Algebra Menu" + "\n");
+
+    }
     public static void menu() {
         Scanner scanner = new Scanner(System.in);
         OSIdentify();
@@ -189,6 +237,7 @@ public class Main {
         System.out.println("calculate - Opens Calculation Engine");
         System.out.println("probabilities - Open Probability Engine");
         System.out.println("pythagoras - Opens Pythagoras Calculations");
+        System.out.println("algebra - Opens Algebraic Calculations");
         System.out.println("settings - Opens Settings Menu");
         System.out.println("help - Opens Help Menu");
         System.out.println("exit - Exit the program");
@@ -198,6 +247,7 @@ public class Main {
             case "variable": variables(); break;
             case "calculate": calculate(); break;
             //case "probabilities": probability(); break;
+            case "algebra": algebra(); break;
             case "pythagoras": pythagoras(); break;
             case "settings": settings(); break;
             //case "help": help(); break;
