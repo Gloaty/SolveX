@@ -1,15 +1,25 @@
 package com.gloatyuk.solvex;
 
 import java.math.MathContext;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
 
 public class Main {
+    public static class HistoryEntry {
+        String equation;
+        double result;
+
+        public HistoryEntry(String equation, double result) {
+            this.equation = equation;
+            this.result = result;
+        }
+
+        @Override
+        public String toString() {
+            return equation + "=" + result;
+        }
+    }
     static Map<String, Double> variables = new HashMap<>();
+    static Stack<HistoryEntry> calculationHistory = new Stack<>();
     public static void OSIdentify() {
         String os = System.getProperty("os.name").toLowerCase();
         System.out.print("Operating System Detected - ");
@@ -36,8 +46,8 @@ public class Main {
 
     public static void settings() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Settings Menu" + "\n");
-        System.out.println("precision - Sets the precision of float outputs" + "\n");
+        System.out.println("=== Settings Menu ===\n");
+        System.out.println("precision - Sets the precision of float outputs\n");
         System.out.println("Command: ");
         String command = scanner.nextLine().trim();
         if (command.equalsIgnoreCase("precision")) {
@@ -58,7 +68,7 @@ public class Main {
             variables.put(name, 0.0);
         }
         System.out.print("\n");
-        System.out.println("Variable Menu" + "\n");
+        System.out.println("=== Variable Menu ===\n");
         System.out.println("edit --VAR - Edit a variable's data");
         System.out.println("recall - Show values of all variables");
         System.out.println("return - Exit variable menu");
@@ -69,7 +79,7 @@ public class Main {
             menu();
         }
         if (command.equalsIgnoreCase("recall")) {
-            System.out.println("Current Variable Values: " + "\n");
+            System.out.println("Current Variable Values: \n");
             for (String name : varNames) {
                 System.out.println(name + " Value: " + variables.get(name));
             }
@@ -100,9 +110,10 @@ public class Main {
     public static void pythagoras() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("\n");
-        System.out.println("Pythagoras Calculations");
+        System.out.println("=== Pythagoras Calculations ===\n");
         System.out.println("standard - A^2 + B^2 = C^2");
         System.out.println("reverse - C^2 - A^2 = B^2");
+        System.out.println("back - Return to previous menu");
         System.out.print("Command: ");
         String command = scanner.nextLine().trim();
         if (command.equalsIgnoreCase("standard")) {
@@ -122,6 +133,9 @@ public class Main {
             double aValue = scanner.nextInt();
             double bValue = Math.sqrt(Math.pow(cValue, 2) - Math.pow(aValue, 2));
             System.out.println("Side Length: " + bValue + "\n");
+        }
+        if (command.equalsIgnoreCase("back")) {
+            menu();
         }
         else {
             System.out.print("Invalid Command, press enter to try again...");
@@ -181,6 +195,7 @@ public class Main {
                     case '-' -> stack.push(a-b);
                     case '*' -> stack.push(a*b);
                     case '/' -> stack.push(a/b);
+                    case '^' -> stack.push(Math.pow(a, b));
                 }
             }
             else {
@@ -191,13 +206,14 @@ public class Main {
     }
 
     public static boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/';
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
     }
 
     public static int precedence(char op) {
         return switch (op) {
             case '+', '-' -> 1;
             case '*', '/' -> 2;
+            case '^' -> 3;
             default -> 0;
         };
     }
@@ -220,12 +236,17 @@ public class Main {
 
     public static void calculate() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Calculation Menu\n");
+        System.out.println("=== Calculation Menu ===\n");
+        System.out.println("Enter 'back' to return to menu");
         System.out.println("Please enter equation...");
         System.out.print("Equation: ");
         String equation = scanner.nextLine();
+        if (equation.equalsIgnoreCase("back")) {
+            menu();
+        }
         System.out.println("Calculating...");
         double result = calculationEngine(equation);
+        calculationHistory.push(new HistoryEntry(equation, result));
         System.out.println("Result: " + result);
         try {
             Thread.sleep(1500);
@@ -233,16 +254,16 @@ public class Main {
         catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
+        calculate();
     }
 
     public static void algebra() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Algebra Menu" + "\n");
+        System.out.println("=== Algebra Menu ===\n");
         System.out.println("quadratic - Solve quadratic");
         System.out.println("solvex - Solve for a value of X");
         System.out.print("Command: ");
-        String command = scanner.nextLine();
-        System.out.println(command);
+        String command = scanner.nextLine().trim().toLowerCase();
         switch (command) {
             case "quadratic":
                 System.out.println("Quadratics must be given in the form Ax^2 + Bx + C = 0");
@@ -256,13 +277,33 @@ public class Main {
                 double resultNeg = ((-bValue - Math.sqrt(Math.pow(bValue, 2) - (4 * aValue * cValue))) / (2 * aValue));
                 System.out.println("+Result: " + resultPos);
                 System.out.println("-Result: " + resultNeg);
-                break;
+                algebra();
+            case "solvex":
+                System.out.println("Solving for Value of X: ");
+                System.out.print("Coefficient of X: ");
+                double xCoefficient = scanner.nextDouble();
+                scanner.nextLine();
+                System.out.print("X Equation: ");
+                String xEquation = scanner.nextLine();
+                double result = calculationEngine(xEquation);
+                double xFinal = result / xCoefficient;
+                System.out.println("Value of X: " + xFinal);
+                algebra();
+            default:
+                System.out.println("Invalid command, please try again. ");
+                System.out.println("Press enter to continue...");
+                scanner.nextLine();
+                algebra();
         }
+    }
+    public static void historyMenu() {
+        System.out.println("=== History Menu ===\n");
+        System.out.println("view - View this session's history");
     }
     public static void menu() {
         Scanner scanner = new Scanner(System.in);
         OSIdentify();
-        System.out.println("SolveX Main Menu");
+        System.out.println("=== SolveX Main Menu ===\n");
         System.out.println("variable - Opens Variable Menu");
         System.out.println("calculate - Opens Calculation Engine");
         System.out.println("probabilities - Open Probability Engine");
@@ -272,7 +313,7 @@ public class Main {
         System.out.println("help - Opens Help Menu");
         System.out.println("exit - Exit the program");
         System.out.print("Command: ");
-        String command = scanner.nextLine().trim();
+        String command = scanner.nextLine().trim().toLowerCase();
         switch (command) {
             case "variable": variables(); break;
             case "calculate": calculate(); break;
@@ -282,6 +323,7 @@ public class Main {
             case "settings": settings(); break;
             //case "help": help(); break;
             case "exit": exit(0); break;
+            case "history": System.out.println(calculationHistory.peek()); break;
             default: System.out.println("Invalid Command, please try again");
         }
         System.out.println("Press enter to continue...");
@@ -301,7 +343,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
         menu();
     }
 }
