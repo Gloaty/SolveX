@@ -6,16 +6,16 @@ import java.util.*;
 public class Main {
     public static class HistoryEntry {
         String equation;
-        double result;
+        String result;
 
-        public HistoryEntry(String equation, double result) {
+        public HistoryEntry(String equation, String result) {
             this.equation = equation;
             this.result = result;
         }
 
         @Override
         public String toString() {
-            return equation + "=" + result;
+            return equation + " = " + result;
         }
     }
     static Map<String, Double> variables = new HashMap<>();
@@ -124,6 +124,8 @@ public class Main {
             double bValue = scanner.nextInt();
             double cValue = Math.sqrt(Math.pow(aValue, 2) + Math.pow(bValue, 2));
             System.out.println("Hypotenuse Length: " + cValue + "\n");
+            String equation = aValue + "^2 + " + bValue + "^2";
+            calculationHistory.push(new HistoryEntry(equation, Double.toString(cValue)));
         }
         if (command.equalsIgnoreCase("reverse")) {
             System.out.print("\n");
@@ -133,6 +135,8 @@ public class Main {
             double aValue = scanner.nextInt();
             double bValue = Math.sqrt(Math.pow(cValue, 2) - Math.pow(aValue, 2));
             System.out.println("Side Length: " + bValue + "\n");
+            String equation = aValue + "^2 - " + bValue + "^2";
+            calculationHistory.push(new HistoryEntry(equation, Double.toString(cValue)));
         }
         if (command.equalsIgnoreCase("back")) {
             menu();
@@ -246,7 +250,7 @@ public class Main {
         }
         System.out.println("Calculating...");
         double result = calculationEngine(equation);
-        calculationHistory.push(new HistoryEntry(equation, result));
+        calculationHistory.push(new HistoryEntry(equation, Double.toString(result)));
         System.out.println("Result: " + result);
         try {
             Thread.sleep(1500);
@@ -277,6 +281,7 @@ public class Main {
                 double resultNeg = ((-bValue - Math.sqrt(Math.pow(bValue, 2) - (4 * aValue * cValue))) / (2 * aValue));
                 System.out.println("+Result: " + resultPos);
                 System.out.println("-Result: " + resultNeg);
+                calculationHistory.push(new HistoryEntry( aValue + "x^2 + " + bValue + "x + " + cValue, resultPos + ", " + resultNeg));
                 algebra();
             case "solvex":
                 System.out.println("Solving for Value of X: ");
@@ -288,7 +293,10 @@ public class Main {
                 double result = calculationEngine(xEquation);
                 double xFinal = result / xCoefficient;
                 System.out.println("Value of X: " + xFinal);
+                calculationHistory.push(new HistoryEntry(xCoefficient + "x = " + xEquation +" = x", Double.toString(xFinal)));
                 algebra();
+            case "back":
+                menu();
             default:
                 System.out.println("Invalid command, please try again. ");
                 System.out.println("Press enter to continue...");
@@ -297,8 +305,33 @@ public class Main {
         }
     }
     public static void historyMenu() {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("=== History Menu ===\n");
         System.out.println("view - View this session's history");
+        System.out.println("clear - Clear this session's history");
+        System.out.println("back - Return to main menu");
+        String command = scanner.nextLine().trim().toLowerCase();
+        switch (command) {
+            case "view":
+                Iterator<HistoryEntry> iterator = calculationHistory.iterator();
+                while (iterator.hasNext()) {
+                    System.out.println(calculationHistory.peek());
+                }
+                try {
+                    Thread.sleep(1500);
+                }
+                catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+                historyMenu();
+            case "clear":
+            case "back":
+            default:
+                System.out.println("Invalid command, please try again.");
+                System.out.println("Press enter to continue...");
+                scanner.nextLine();
+                historyMenu();
+        }
     }
     public static void menu() {
         Scanner scanner = new Scanner(System.in);
@@ -323,7 +356,7 @@ public class Main {
             case "settings": settings(); break;
             //case "help": help(); break;
             case "exit": exit(0); break;
-            case "history": System.out.println(calculationHistory.peek()); break;
+            case "history": historyMenu(); break;
             default: System.out.println("Invalid Command, please try again");
         }
         System.out.println("Press enter to continue...");
