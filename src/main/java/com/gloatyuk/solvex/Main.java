@@ -106,11 +106,49 @@ public class Main {
             }
         }
     }
+    public static void trigonometry() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n=== Trigonometric Calculations ===\n");
+        System.out.println("pythagoras - Open Pythagoras Menu");
+        System.out.println("basic - Basic 1-step Trig Calculations");
+        System.out.println("back - Return to previous menu");
+        System.out.println("Command: ");
+        String command = scanner.nextLine().trim().toLowerCase();
+        switch (command) {
+            case "pythagoras":
+                pythagoras();
+                break;
+            case "basic":
+                System.out.println("Valid command and operators: ");
+                System.out.println("sin - Trigonometric Sine");
+                System.out.println("cos - Trigonometric Cosine");
+                System.out.println("tan - Trigonometric Tangent");
+                System.out.println("csc - Trigonometric Cosecant");
+                System.out.println("sec - Trigonometric Secant");
+                System.out.println("cot - Trigonometric Cotangent");
+                System.out.println("arc - Open Inverse menu");
+                System.out.println("hyp - Open Hyperbolic menu");
+                System.out.println("archyp - Open Inverse Hyperbolic menu");
+                System.out.println("Command: ");
+                command = scanner.nextLine().trim().toLowerCase();
+                if (command.equalsIgnoreCase("arc")) {
+                    System.out.println("Inverse Trigonometry Commands: ");
+                    System.out.println("arcsin");
+                }
+                trigonometry();
+            case "back":
+                menu();
+            default:
+                System.out.println("Invalid command, please try again...");
+                System.out.println("Press enter to continue...");
+                scanner.nextLine();
+                trigonometry();
+        }
+    }
 
     public static void pythagoras() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("\n");
-        System.out.println("=== Pythagoras Calculations ===\n");
+        System.out.println("\n=== Pythagoras Calculations ===\n");
         System.out.println("standard - A^2 + B^2 = C^2");
         System.out.println("reverse - C^2 - A^2 = B^2");
         System.out.println("back - Return to previous menu");
@@ -200,6 +238,7 @@ public class Main {
                     case '*' -> stack.push(a*b);
                     case '/' -> stack.push(a/b);
                     case '^' -> stack.push(Math.pow(a, b));
+                    case '%' -> stack.push(a%b);
                 }
             }
             else {
@@ -210,13 +249,13 @@ public class Main {
     }
 
     public static boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '%';
     }
 
     public static int precedence(char op) {
         return switch (op) {
             case '+', '-' -> 1;
-            case '*', '/' -> 2;
+            case '*', '/', '%' -> 2;
             case '^' -> 3;
             default -> 0;
         };
@@ -340,7 +379,7 @@ public class Main {
         System.out.println("variable - Opens Variable Menu");
         System.out.println("calculate - Opens Calculation Engine");
         System.out.println("probabilities - Open Probability Engine");
-        System.out.println("pythagoras - Opens Pythagoras Calculations");
+        System.out.println("trigonometry - Opens Trigonometric Calculations");
         System.out.println("algebra - Opens Algebraic Calculations");
         System.out.println("settings - Opens Settings Menu");
         System.out.println("help - Opens Help Menu");
@@ -352,7 +391,7 @@ public class Main {
             case "calculate": calculate(); break;
             //case "probabilities": probability(); break;
             case "algebra": algebra(); break;
-            case "pythagoras": pythagoras(); break;
+            case "trigonometry": trigonometry(); break;
             case "settings": settings(); break;
             //case "help": help(); break;
             case "exit": exit(0); break;
