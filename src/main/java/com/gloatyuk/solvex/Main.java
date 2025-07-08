@@ -2,6 +2,7 @@ package com.gloatyuk.solvex;
 
 import java.math.MathContext;
 import java.util.*;
+import java.util.function.Function;
 
 public class Main {
     public static class HistoryEntry {
@@ -18,9 +19,41 @@ public class Main {
             return equation + " = " + result;
         }
     }
+    static final Map<String, Function<Double, Double>> trigFunctions = new HashMap<>();
+    static {
+        //Standard
+        trigFunctions.put("sin", Math::sin);
+        trigFunctions.put("cos", Math::cos);
+        trigFunctions.put("tan", Math::tan);
+        trigFunctions.put("csc", x -> 1/Math.sin(x));
+        trigFunctions.put("sec", x -> 1/Math.cos(x));
+        trigFunctions.put("cot", x -> 1/Math.tan(x));
+        //Inverse
+        trigFunctions.put("arcsin", Math::asin);
+        trigFunctions.put("arccos", Math::acos);
+        trigFunctions.put("arctan", Math::atan);
+        trigFunctions.put("arccsc", x -> 1/Math.asin(x));
+        trigFunctions.put("arcsec", x -> 1/Math.acos(x));
+        trigFunctions.put("arccot", x -> 1/Math.atan(x));
+        //Hyperbolic
+        trigFunctions.put("sinh", Math::sinh);
+        trigFunctions.put("cosh", Math::cosh);
+        trigFunctions.put("tanh", Math::tanh);
+        trigFunctions.put("csch", x -> 1/Math.sinh(x));
+        trigFunctions.put("sech", x -> 1/Math.cosh(x));
+        trigFunctions.put("coth", x -> 1/Math.tanh(x));
+        //Hyperbolic Inverse
+        trigFunctions.put("arcsinh", x -> Math.log(x + Math.sqrt(x * x + 1)));
+        trigFunctions.put("arccosh", x -> Math.log(x + Math.sqrt(x * x - 1)));
+        trigFunctions.put("arctanh", x -> 0.5 * Math.log((1 + x) / (1 - x)));
+        trigFunctions.put("arccsch", x -> Math.log(1 / x + Math.sqrt(1 + 1 / (x * x))));
+        trigFunctions.put("arcsech", x -> Math.log(1 / x + Math.sqrt(1 / (x * x) - 1)));
+        trigFunctions.put("arccoth", x -> 0.5 * Math.log((x + 1) / (x - 1)));
+    }
     static Map<String, Double> variables = new HashMap<>();
     static Stack<HistoryEntry> calculationHistory = new Stack<>();
     public static void OSIdentify() {
+        //Identify the host OS
         String os = System.getProperty("os.name").toLowerCase();
         System.out.print("Operating System Detected - ");
         if (os.contains("win")) {
@@ -45,6 +78,7 @@ public class Main {
     }
 
     public static void settings() {
+        //Settings menu
         Scanner scanner = new Scanner(System.in);
         System.out.println("=== Settings Menu ===\n");
         System.out.println("precision - Sets the precision of float outputs\n");
@@ -62,6 +96,7 @@ public class Main {
     }
 
     public static void variables() {
+        //Variable menu
         Scanner scanner = new Scanner(System.in);
         String[] varNames = {"X", "Y", "Z", "A", "B", "C", "D", "E", "F"};
         for (String name : varNames) {
@@ -109,41 +144,102 @@ public class Main {
     public static void trigonometry() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n=== Trigonometric Calculations ===\n");
+        System.out.println("NOTE - All input angles must be given as radians. ");
         System.out.println("pythagoras - Open Pythagoras Menu");
-        System.out.println("basic - Basic 1-step Trig Calculations");
+        System.out.println("calculate - Basic 1-step Trig Calculations");
+        System.out.println("convert - Convert degrees to radians, and vice versa");
         System.out.println("back - Return to previous menu");
         System.out.println("Command: ");
         String command = scanner.nextLine().trim().toLowerCase();
-        switch (command) {
-            case "pythagoras":
-                pythagoras();
-                break;
-            case "basic":
-                System.out.println("Valid command and operators: ");
-                System.out.println("sin - Trigonometric Sine");
-                System.out.println("cos - Trigonometric Cosine");
-                System.out.println("tan - Trigonometric Tangent");
-                System.out.println("csc - Trigonometric Cosecant");
-                System.out.println("sec - Trigonometric Secant");
-                System.out.println("cot - Trigonometric Cotangent");
-                System.out.println("arc - Open Inverse menu");
-                System.out.println("hyp - Open Hyperbolic menu");
-                System.out.println("archyp - Open Inverse Hyperbolic menu");
+        if (command.equalsIgnoreCase("pythagoras")) {
+            pythagoras();
+        }
+        if (command.equalsIgnoreCase("calculate")) {
+            System.out.println("Valid command and operators: ");
+            System.out.println("sin - Trigonometric Sine");
+            System.out.println("cos - Trigonometric Cosine");
+            System.out.println("tan - Trigonometric Tangent");
+            System.out.println("csc - Trigonometric Cosecant");
+            System.out.println("sec - Trigonometric Secant");
+            System.out.println("cot - Trigonometric Cotangent");
+            System.out.println("arc - Open Inverse menu");
+            System.out.println("hyp - Open Hyperbolic menu");
+            System.out.println("archyp - Open Inverse Hyperbolic menu");
+            System.out.println("Command: ");
+            command = scanner.nextLine().trim().toLowerCase();
+            switch (command) {
+                case "arc":
+                    System.out.println("Inverse Trigonometry Commands: ");
+                    System.out.println("arcsin - Inverse Sine");
+                    System.out.println("arccos - Inverse Cosine");
+                    System.out.println("arctan - Inverse Tangent");
+                    System.out.println("arccsc - Inverse Cosecant");
+                    System.out.println("arcsec - Inverse Secant");
+                    System.out.println("arccot - Inverse Cotangent");
+                    break;
+                case "hyp":
+                    System.out.println("sinh - Hyperbolic Sine");
+                    System.out.println("cosh - Hyperbolic Cosine");
+                    System.out.println("tanh - Hyperbolic Tangent");
+                    System.out.println("csch - Hyperbolic Cosecant");
+                    System.out.println("sech - Hyperbolic Secant");
+                    System.out.println("coth - Hyperbolic Cotangent");
+                    break;
+                case "archyp":
+                    System.out.println("arcsinh - Inverse Hyperbolic Sine");
+                    System.out.println("arccosh - Inverse Hyperbolic Cosine");
+                    System.out.println("arctanh - Inverse Hyperbolic Tangent");
+                    System.out.println("arccsch - Inverse Hyperbolic Cosecant");
+                    System.out.println("arcsech - Inverse Hyperbolic Secant");
+                    System.out.println("arccoth - Inverse Hyperbolic Cotangent");
+                    break;
+
+                default:
+                    System.out.println("Invalid command, please try again. ");
+                    System.out.println("Press enter to continue...");
+                    scanner.nextLine();
+                    break;
+            }
+            if (command.equalsIgnoreCase("convert")) {
+                System.out.println("\n== Conversion Menu ===\n");
+                System.out.println("degree - Convert radians to degrees");
+                System.out.println("radian - Convert degrees to radians");
+                System.out.println("back - Return to previous menu");
                 System.out.println("Command: ");
                 command = scanner.nextLine().trim().toLowerCase();
-                if (command.equalsIgnoreCase("arc")) {
-                    System.out.println("Inverse Trigonometry Commands: ");
-                    System.out.println("arcsin");
+                double input;
+                switch (command) {
+                    case "degree":
+                        System.out.println("Input radians: ");
+                        input = scanner.nextDouble();
+                        double degrees = Math.toDegrees(input);
+                        System.out.println("Output degrees: " + degrees);
+                        break;
+                    case "radian":
+                        System.out.println("Input degrees: ");
+                        input = scanner.nextDouble();
+                        double radians = Math.toRadians(input);
+                        System.out.println("Output radians: " + radians);
+                        break;
+                    case "back":
+                        break;
+                    default:
+                        System.out.println("Invalid command, please try again");
+                        System.out.println("Press enter to continue...");
+                        scanner.nextLine();
+                        break;
                 }
-                trigonometry();
-            case "back":
+            }
+            if (command.equalsIgnoreCase("back")) {
                 menu();
-            default:
+            }
+            else {
                 System.out.println("Invalid command, please try again...");
                 System.out.println("Press enter to continue...");
                 scanner.nextLine();
-                trigonometry();
+            }
         }
+        trigonometry();
     }
 
     public static void pythagoras() {
@@ -187,6 +283,7 @@ public class Main {
     }
 
     public static List<String> toPostfix(String infix) {
+        //Shunting Yard Algorithm - Touch at own risk
         List<String> output = new ArrayList<>();
         Stack<Character> operators = new Stack<>();
         int i = 0;
@@ -253,6 +350,7 @@ public class Main {
     }
 
     public static int precedence(char op) {
+        //Handles operator precedence within equation
         return switch (op) {
             case '+', '-' -> 1;
             case '*', '/', '%' -> 2;
@@ -278,6 +376,7 @@ public class Main {
     }
 
     public static void calculate() {
+        //Calculation menu frontend
         Scanner scanner = new Scanner(System.in);
         System.out.println("=== Calculation Menu ===\n");
         System.out.println("Enter 'back' to return to menu");
@@ -301,6 +400,7 @@ public class Main {
     }
 
     public static void algebra() {
+        //Algebraic calculations
         Scanner scanner = new Scanner(System.in);
         System.out.println("=== Algebra Menu ===\n");
         System.out.println("quadratic - Solve quadratic");
@@ -344,6 +444,7 @@ public class Main {
         }
     }
     public static void historyMenu() {
+        //Handles calculation history
         Scanner scanner = new Scanner(System.in);
         System.out.println("=== History Menu ===\n");
         System.out.println("view - View this session's history");
@@ -373,6 +474,7 @@ public class Main {
         }
     }
     public static void menu() {
+        //Main frontend menu
         Scanner scanner = new Scanner(System.in);
         OSIdentify();
         System.out.println("=== SolveX Main Menu ===\n");
@@ -415,6 +517,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        //Main function, program entry point. DO NOT TOUCH
         menu();
     }
 }
