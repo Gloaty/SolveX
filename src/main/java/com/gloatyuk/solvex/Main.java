@@ -165,7 +165,7 @@ public class Main {
             System.out.println("arc - Open Inverse menu");
             System.out.println("hyp - Open Hyperbolic menu");
             System.out.println("archyp - Open Inverse Hyperbolic menu");
-            System.out.println("Command: ");
+            System.out.print("Command: ");
             command = scanner.nextLine().trim().toLowerCase();
             switch (command) {
                 case "arc":
@@ -175,16 +175,19 @@ public class Main {
                     System.out.println("arctan - Inverse Tangent");
                     System.out.println("arccsc - Inverse Cosecant");
                     System.out.println("arcsec - Inverse Secant");
-                    System.out.println("arccot - Inverse Cotangent");
-                    break;
+                    System.out.println("arccot - Inverse Cotangent\n");
+                    System.out.println("Press any key to continue...");
+                    scanner.nextLine();
+                    trigonometry();
                 case "hyp":
                     System.out.println("sinh - Hyperbolic Sine");
                     System.out.println("cosh - Hyperbolic Cosine");
                     System.out.println("tanh - Hyperbolic Tangent");
                     System.out.println("csch - Hyperbolic Cosecant");
                     System.out.println("sech - Hyperbolic Secant");
-                    System.out.println("coth - Hyperbolic Cotangent");
-                    break;
+                    System.out.println("coth - Hyperbolic Cotangent\n");
+                    scanner.nextLine();
+                    trigonometry();
                 case "archyp":
                     System.out.println("arcsinh - Inverse Hyperbolic Sine");
                     System.out.println("arccosh - Inverse Hyperbolic Cosine");
@@ -198,7 +201,7 @@ public class Main {
                     System.out.println("Invalid command, please try again. ");
                     System.out.println("Press enter to continue...");
                     scanner.nextLine();
-                    break;
+                    trigonometry();
             }
             if (command.equalsIgnoreCase("convert")) {
                 System.out.println("\n== Conversion Menu ===\n");
@@ -214,20 +217,20 @@ public class Main {
                         input = scanner.nextDouble();
                         double degrees = Math.toDegrees(input);
                         System.out.println("Output degrees: " + degrees);
-                        break;
+                        trigonometry();
                     case "radian":
                         System.out.println("Input degrees: ");
                         input = scanner.nextDouble();
                         double radians = Math.toRadians(input);
                         System.out.println("Output radians: " + radians);
-                        break;
+                        trigonometry();
                     case "back":
-                        break;
+                        menu();
                     default:
                         System.out.println("Invalid command, please try again");
                         System.out.println("Press enter to continue...");
                         scanner.nextLine();
-                        break;
+                        trigonometry();
                 }
             }
             if (command.equalsIgnoreCase("back")) {
