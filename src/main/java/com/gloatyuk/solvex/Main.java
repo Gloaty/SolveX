@@ -9,7 +9,6 @@ import java.util.function.Function;
  * trigonometry, algebra, and variable management.
  */
 public class Main {
-    
     /**
      * Represents a single calculation entry in the history.
      * Stores both the original equation and its computed result.
@@ -28,11 +27,9 @@ public class Main {
             return equation + " = " + result;
         }
     }
-    
+
     // Static map containing all supported trigonometric functions
     static final Map<String, Function<Double, Double>> trigFunctions = new HashMap<>();
-    
-    // Initialize trigonometric functions with their implementations
     static {
         // Standard trigonometric functions
         trigFunctions.putAll(Map.of(
@@ -64,7 +61,6 @@ public class Main {
                 "arcsech", x -> Math.log(1 / x + Math.sqrt(1 / (x * x) - 1)),
                 "arccoth", x -> 0.5 * Math.log((x + 1) / (x - 1))));
     }
-    
     // Global variables storage for user-defined variables
     static Map<String, Double> variables = new HashMap<>();
     
@@ -76,7 +72,7 @@ public class Main {
     
     /**
      * Identifies and displays the current operating system.
-     * Used for informational purposes at startup.
+     * I honestly don't know why I have this, maybe remove in future
      */
     public static void OSIdentify() {
         // Get OS name from system properties
@@ -116,7 +112,6 @@ public class Main {
         System.out.println("radianMode - Toggle between Radian and Degree mode\n");
         System.out.print("Command: ");
         String command = scanner.nextLine().trim();
-        
         // Handle precision setting (currently not fully implemented)
         if (command.equalsIgnoreCase("precision")) {
             System.out.println("Precision Value: ");
@@ -124,7 +119,6 @@ public class Main {
             MathContext mc = new MathContext(precision);
             // TODO: Implement precision functionality
         }
-        
         // Handle radian mode toggle
         if (command.equalsIgnoreCase("radianMode")) {
             String currentMode;
@@ -148,15 +142,12 @@ public class Main {
      */
     public static void variables() {
         Scanner scanner = new Scanner(System.in);
-        
         // Initialize default variable names
         String[] varNames = {"X", "Y", "Z", "A", "B", "C", "D", "E", "F"};
-        
         // Set all variables to default value of 0.0
         for (String name : varNames) {
             variables.put(name, 0.0);
         }
-        
         System.out.print("\n");
         System.out.println("=== Variable Menu ===\n");
         System.out.println("edit --VAR - Edit a variable's data");
@@ -164,13 +155,11 @@ public class Main {
         System.out.println("return - Exit variable menu");
         System.out.print("Command: ");
         String command = scanner.nextLine().trim();
-        
-        // Handle menu navigation
+        // Return to previous menu
         if (command.equalsIgnoreCase("return")) {
             System.out.println("Exiting Variable Menu...");
             menu();
         }
-        
         // Display all variable values
         if (command.equalsIgnoreCase("recall")) {
             System.out.println("Current Variable Values: \n");
@@ -181,7 +170,6 @@ public class Main {
             scanner.nextLine();
             variables();
         }
-        
         // Handle variable editing with format "edit --VARNAME"
         if (command.toLowerCase().startsWith("edit --")) {
             String varName = command.substring(7).trim().toUpperCase();
@@ -219,7 +207,6 @@ public class Main {
         else {
             System.out.println("Degree Mode");
         }
-        
         System.out.println("NOTE - All input angles must be given as radians. ");
         System.out.println("pythagoras - Open Pythagoras Menu");
         System.out.println("calculate - Basic 1-step Trig Calculations");
@@ -301,7 +288,6 @@ public class Main {
                             // Convert degrees to radians for calculation, then result back if needed
                             result = Math.toDegrees(trigOperation.apply(Math.toRadians(angleValue)));
                         }
-                        
                         System.out.println(command + "(" + angleValue + ") = " + result);
                         calculationHistory.push(new HistoryEntry(command + "(" + angleValue + ")", Double.toString(result)));
                         System.out.print("Press enter to continue...");
@@ -334,7 +320,6 @@ public class Main {
             System.out.print("Command: ");
             command = scanner.nextLine().trim().toLowerCase();
             double input;
-            
             switch (command) {
                 case "degree":
                     System.out.print("Input radians: ");
@@ -363,7 +348,6 @@ public class Main {
                     trigonometry();
                 }
             }
-            
             if (command.equalsIgnoreCase("back")) {
                 menu();
             }
@@ -413,7 +397,6 @@ public class Main {
             String equation = aValue + "^2 - " + bValue + "^2";
             calculationHistory.push(new HistoryEntry(equation, Double.toString(cValue)));
         }
-        
         if (command.equalsIgnoreCase("back")) {
             menu();
         }
@@ -438,7 +421,6 @@ public class Main {
         
         while (i < infix.length()) {
             char c = infix.charAt(i);
-            
             // Handle multi-digit numbers and decimals
             if (Character.isDigit(c) || c == '.') {
                 StringBuilder number = new StringBuilder();
@@ -449,7 +431,6 @@ public class Main {
                 output.add(number.toString());
                 continue;
             }
-            
             // Handle opening parenthesis
             if (c == '(') {
                 operators.push(c);
@@ -472,7 +453,6 @@ public class Main {
             }
             i++;
         }
-        
         // Pop remaining operators
         while (!operators.isEmpty()) {
             output.add(String.valueOf(operators.pop()));
@@ -547,12 +527,10 @@ public class Main {
     public static double calculationEngine(String equation) {
         // Remove all whitespace from the equation
         equation = equation.replaceAll("\\s", "");
-        
         // Handle special functions: pow() and root()
         if (equation.contains("pow") || equation.contains("root")) {
             double targetNumber = Double.parseDouble(equation.substring(equation.indexOf("(")+1, equation.indexOf(",")));
             double power = Double.parseDouble(equation.substring(equation.indexOf(",")+1, equation.indexOf(")")));
-            
             if (equation.contains("pow")) {
                 return Math.pow(targetNumber, power);
             }
@@ -560,7 +538,6 @@ public class Main {
                 return Math.pow(targetNumber, 1/power);
             }
         }
-        
         // For standard arithmetic, use postfix evaluation
         List<String> postfix = toPostfix(equation);
         return evaluatePostfix(postfix);
@@ -577,11 +554,9 @@ public class Main {
         System.out.println("Please enter equation...");
         System.out.print("Equation: ");
         String equation = scanner.nextLine();
-        
         if (equation.equalsIgnoreCase("back")) {
             menu();
         }
-        
         System.out.println("Calculating...");
         double result = calculationEngine(equation);
         calculationHistory.push(new HistoryEntry(equation, Double.toString(result)));
@@ -607,7 +582,6 @@ public class Main {
         System.out.println("solvex - Solve for a value of X");
         System.out.print("Command: ");
         String command = scanner.nextLine().trim().toLowerCase();
-        
         switch (command) {
             case "quadratic":
                 // Quadratic formula: (-b ± √(b² - 4ac)) / 2a
@@ -627,7 +601,6 @@ public class Main {
                 System.out.println("-Result: " + resultNeg);
                 calculationHistory.push(new HistoryEntry( aValue + "x^2 + " + bValue + "x + " + cValue, resultPos + ", " + resultNeg));
                 algebra();
-                
             case "solvex":
                 // Solve linear equations for x
                 System.out.println("Solving for Value of X: ");
@@ -642,10 +615,8 @@ public class Main {
                 System.out.println("Value of X: " + xFinal);
                 calculationHistory.push(new HistoryEntry(xCoefficient + "x = " + xEquation +" = x", Double.toString(xFinal)));
                 algebra();
-                
             case "back":
                 menu();
-                
             default:
                 System.out.println("Invalid command, please try again. ");
                 System.out.println("Press enter to continue...");
@@ -665,7 +636,6 @@ public class Main {
         System.out.println("clear - Clear this session's history");
         System.out.println("back - Return to main menu");
         String command = scanner.nextLine().trim().toLowerCase();
-        
         switch (command) {
             case "view":
                 // Display all calculation history entries
@@ -681,7 +651,6 @@ public class Main {
                 System.out.println("Press enter to continue...");
                 scanner.nextLine();
                 historyMenu();
-                
             case "clear":
                 // Clear all history entries
                 calculationHistory.empty();
@@ -689,10 +658,8 @@ public class Main {
                 System.out.println("Press enter to continue...");
                 scanner.nextLine();
                 historyMenu();
-                
             case "back":
                 menu();
-                
             default:
                 System.out.println("Invalid command, please try again.");
                 System.out.println("Press enter to continue...");
@@ -708,7 +675,6 @@ public class Main {
     public static void menu() {
         Scanner scanner = new Scanner(System.in);
         OSIdentify(); // Display OS information
-        
         System.out.println("=== SolveX Main Menu ===\n");
         System.out.println("variable - Opens Variable Menu");
         System.out.println("calculate - Opens Calculation Engine");
@@ -721,7 +687,6 @@ public class Main {
         System.out.println("exit - Exit the program");
         System.out.print("Command: ");
         String command = scanner.nextLine().trim().toLowerCase();
-        
         // Route to appropriate menu based on user input
         switch (command) {
             case "variable": variables(); break;
