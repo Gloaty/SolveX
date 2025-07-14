@@ -21,34 +21,35 @@ public class Main {
     }
     static final Map<String, Function<Double, Double>> trigFunctions = new HashMap<>();
     static {
-        //Standard
-        trigFunctions.put("sin", Math::sin);
-        trigFunctions.put("cos", Math::cos);
-        trigFunctions.put("tan", Math::tan);
-        trigFunctions.put("csc", x -> 1/Math.sin(x));
-        trigFunctions.put("sec", x -> 1/Math.cos(x));
-        trigFunctions.put("cot", x -> 1/Math.tan(x));
-        //Inverse
-        trigFunctions.put("arcsin", Math::asin);
-        trigFunctions.put("arccos", Math::acos);
-        trigFunctions.put("arctan", Math::atan);
-        trigFunctions.put("arccsc", x -> 1/Math.asin(x));
-        trigFunctions.put("arcsec", x -> 1/Math.acos(x));
-        trigFunctions.put("arccot", x -> 1/Math.atan(x));
-        //Hyperbolic
-        trigFunctions.put("sinh", Math::sinh);
-        trigFunctions.put("cosh", Math::cosh);
-        trigFunctions.put("tanh", Math::tanh);
-        trigFunctions.put("csch", x -> 1/Math.sinh(x));
-        trigFunctions.put("sech", x -> 1/Math.cosh(x));
-        trigFunctions.put("coth", x -> 1/Math.tanh(x));
-        //Hyperbolic Inverse
-        trigFunctions.put("arcsinh", x -> Math.log(x + Math.sqrt(x * x + 1)));
-        trigFunctions.put("arccosh", x -> Math.log(x + Math.sqrt(x * x - 1)));
-        trigFunctions.put("arctanh", x -> 0.5 * Math.log((1 + x) / (1 - x)));
-        trigFunctions.put("arccsch", x -> Math.log(1 / x + Math.sqrt(1 + 1 / (x * x))));
-        trigFunctions.put("arcsech", x -> Math.log(1 / x + Math.sqrt(1 / (x * x) - 1)));
-        trigFunctions.put("arccoth", x -> 0.5 * Math.log((x + 1) / (x - 1)));
+        // Standard trigonometric functions
+        trigFunctions.putAll(Map.of(
+                "sin", Math::sin, "cos", Math::cos, "tan", Math::tan,
+                "csc", x -> 1 / Math.sin(x),
+                "sec", x -> 1 / Math.cos(x),
+                "cot", x -> 1 / Math.tan(x)));
+        
+        // Inverse trigonometric functions
+        trigFunctions.putAll(Map.of(
+                "arcsin", Math::asin, "arccos", Math::acos, "arctan", Math::atan,
+                "arccsc", x -> 1 / Math.asin(x),
+                "arcsec", x -> 1 / Math.acos(x),
+                "arccot", x -> 1 / Math.atan(x)));
+        
+        // Hyperbolic functions
+        trigFunctions.putAll(Map.of(
+                "sinh", Math::sinh, "cosh", Math::cosh, "tanh", Math::tanh,
+                "csch", x -> 1 / Math.sinh(x),
+                "sech", x -> 1 / Math.cosh(x),
+                "coth", x -> 1 / Math.tanh(x)));
+        
+        // Hyperbolic inverse functions
+        trigFunctions.putAll(Map.of(
+                "arcsinh", x -> Math.log(x + Math.sqrt(x * x + 1)),
+                "arccosh", x -> Math.log(x + Math.sqrt(x * x - 1)),
+                "arctanh", x -> 0.5 * Math.log((1 + x) / (1 - x)),
+                "arccsch", x -> Math.log(1 / x + Math.sqrt(1 + 1 / (x * x))),
+                "arcsech", x -> Math.log(1 / x + Math.sqrt(1 / (x * x) - 1)),
+                "arccoth", x -> 0.5 * Math.log((x + 1) / (x - 1))));
     }
     static Map<String, Double> variables = new HashMap<>();
     static Stack<HistoryEntry> calculationHistory = new Stack<>();
@@ -167,70 +168,100 @@ public class Main {
             System.out.println("archyp - Open Inverse Hyperbolic menu");
             System.out.print("Command: ");
             command = scanner.nextLine().trim().toLowerCase();
-            switch (command) {
-                case "arc":
-                    System.out.println("Inverse Trigonometry Commands: ");
-                    System.out.println("arcsin - Inverse Sine");
-                    System.out.println("arccos - Inverse Cosine");
-                    System.out.println("arctan - Inverse Tangent");
-                    System.out.println("arccsc - Inverse Cosecant");
-                    System.out.println("arcsec - Inverse Secant");
-                    System.out.println("arccot - Inverse Cotangent\n");
-                    System.out.println("Press any key to continue...");
-                    scanner.nextLine();
-                    trigonometry();
-                case "hyp":
-                    System.out.println("sinh - Hyperbolic Sine");
-                    System.out.println("cosh - Hyperbolic Cosine");
-                    System.out.println("tanh - Hyperbolic Tangent");
-                    System.out.println("csch - Hyperbolic Cosecant");
-                    System.out.println("sech - Hyperbolic Secant");
-                    System.out.println("coth - Hyperbolic Cotangent\n");
-                    scanner.nextLine();
-                    trigonometry();
-                case "archyp":
-                    System.out.println("arcsinh - Inverse Hyperbolic Sine");
-                    System.out.println("arccosh - Inverse Hyperbolic Cosine");
-                    System.out.println("arctanh - Inverse Hyperbolic Tangent");
-                    System.out.println("arccsch - Inverse Hyperbolic Cosecant");
-                    System.out.println("arcsech - Inverse Hyperbolic Secant");
-                    System.out.println("arccoth - Inverse Hyperbolic Cotangent");
-                    break;
-
-                default:
+            if (command.equalsIgnoreCase("arc")) {
+                System.out.println("Inverse Trigonometry Commands: ");
+                System.out.println("arcsin - Inverse Sine");
+                System.out.println("arccos - Inverse Cosine");
+                System.out.println("arctan - Inverse Tangent");
+                System.out.println("arccsc - Inverse Cosecant");
+                System.out.println("arcsec - Inverse Secant");
+                System.out.println("arccot - Inverse Cotangent\n");
+                System.out.println("Press any key to continue...");
+                scanner.nextLine();
+                trigonometry();
+            }
+            if (command.equalsIgnoreCase("hyp")) {
+                System.out.println("sinh - Hyperbolic Sine");
+                System.out.println("cosh - Hyperbolic Cosine");
+                System.out.println("tanh - Hyperbolic Tangent");
+                System.out.println("csch - Hyperbolic Cosecant");
+                System.out.println("sech - Hyperbolic Secant");
+                System.out.println("coth - Hyperbolic Cotangent\n");
+                scanner.nextLine();
+                trigonometry();
+            }
+            if (command.equalsIgnoreCase("archyp")) {
+                System.out.println("arcsinh - Inverse Hyperbolic Sine");
+                System.out.println("arccosh - Inverse Hyperbolic Cosine");
+                System.out.println("arctanh - Inverse Hyperbolic Tangent");
+                System.out.println("arccsch - Inverse Hyperbolic Cosecant");
+                System.out.println("arcsech - Inverse Hyperbolic Secant");
+                System.out.println("arccoth - Inverse Hyperbolic Cotangent");
+                trigonometry();
+            }
+            else {
+                if (trigFunctions.containsKey(command)) {
+                    System.out.print("Enter angle (radians): ");
+                    try {
+                        double angleValue = scanner.nextDouble();
+                        Function<Double, Double> trigOperation = trigFunctions.get(command);
+                        double result = trigOperation.apply(angleValue);
+                        System.out.println(command + "(" + angleValue + ") = " + result);
+                        calculationHistory.push(new HistoryEntry(command + "(" + angleValue + ")", Double.toString(result)));
+                        System.out.print("Press enter to continue...");
+                        scanner.nextLine();
+                        trigonometry();
+                    }
+                    catch (InputMismatchException e) {
+                        System.out.println("Invalid value, please try again. ");
+                        //scanner.nextLine();
+                        System.out.println("Press enter to continue...");
+                        scanner.nextLine();
+                        trigonometry();
+                    }
+                }
+                else {
                     System.out.println("Invalid command, please try again. ");
                     System.out.println("Press enter to continue...");
                     scanner.nextLine();
                     trigonometry();
+                }
             }
-            if (command.equalsIgnoreCase("convert")) {
-                System.out.println("\n== Conversion Menu ===\n");
-                System.out.println("degree - Convert radians to degrees");
-                System.out.println("radian - Convert degrees to radians");
-                System.out.println("back - Return to previous menu");
-                System.out.println("Command: ");
-                command = scanner.nextLine().trim().toLowerCase();
-                double input;
-                switch (command) {
-                    case "degree":
-                        System.out.println("Input radians: ");
-                        input = scanner.nextDouble();
-                        double degrees = Math.toDegrees(input);
-                        System.out.println("Output degrees: " + degrees);
-                        trigonometry();
-                    case "radian":
-                        System.out.println("Input degrees: ");
-                        input = scanner.nextDouble();
-                        double radians = Math.toRadians(input);
-                        System.out.println("Output radians: " + radians);
-                        trigonometry();
-                    case "back":
-                        menu();
-                    default:
-                        System.out.println("Invalid command, please try again");
-                        System.out.println("Press enter to continue...");
-                        scanner.nextLine();
-                        trigonometry();
+        }
+        if (command.equalsIgnoreCase("convert")) {
+            System.out.println("\n== Conversion Menu ===\n");
+            System.out.println("degree - Convert radians to degrees");
+            System.out.println("radian - Convert degrees to radians");
+            System.out.println("back - Return to previous menu");
+            System.out.println("Command: ");
+            command = scanner.nextLine().trim().toLowerCase();
+            double input;
+            switch (command) {
+                case "degree":
+                    System.out.print("Input radians: ");
+                    input = scanner.nextDouble();
+                    double degrees = Math.toDegrees(input);
+                    System.out.println("Output degrees: " + degrees);
+                    System.out.println("Press enter to continue...");
+                    calculationHistory.push(new HistoryEntry(input + "Radians = " + degrees + "Degrees", Double.toString(degrees)));
+                    scanner.nextLine();
+                    trigonometry();
+                case "radian":
+                    System.out.print("Input degrees: ");
+                    input = scanner.nextDouble();
+                    double radians = Math.toRadians(input);
+                    System.out.println("Output radians: " + radians);
+                    System.out.println("Press enter to continue...");
+                    calculationHistory.push(new HistoryEntry(input + "Degrees = " + radians + "Radians", Double.toString(radians)));
+                    scanner.nextLine();
+                    trigonometry();
+                case "back":
+                    menu();
+                default:
+                    System.out.println("Invalid command, please try again");
+                    System.out.println("Press enter to continue...");
+                    scanner.nextLine();
+                    trigonometry();
                 }
             }
             if (command.equalsIgnoreCase("back")) {
@@ -241,7 +272,6 @@ public class Main {
                 System.out.println("Press enter to continue...");
                 scanner.nextLine();
             }
-        }
         trigonometry();
     }
 
@@ -496,6 +526,7 @@ public class Main {
             case "calculate": calculate(); break;
             //case "probabilities": probability(); break;
             case "algebra": algebra(); break;
+            case "trig":
             case "trigonometry": trigonometry(); break;
             case "settings": settings(); break;
             //case "help": help(); break;
