@@ -41,5 +41,5 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### Manual Additions ###
-/ThothProject/ThothProject.xcodeproj/project.xcworkspace/xcuserdata/gloaty.xcuserdatad/UserInterfaceState.xcuserstat
+### XCode ###
+SolveX-GUI/SolveX-GUI.xcodeproj/project.xcworkspace/xcuserdata
